@@ -1,5 +1,6 @@
-import { Injectable } from '@nestjs/common';
+import { Body, HttpException, HttpStatus, Injectable, Req } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { async, retry } from 'rxjs';
 import { UserDto } from 'src/dto/user.dto';
 import { Repository } from 'typeorm';
 import { UserProfileDto } from './dto/dto';
@@ -24,5 +25,22 @@ export class UserService {
             : { where: { [props]: val } };
         const profile = await this.userRepository.findOne(looking);
         return profile;
+    }
+
+    async Update(criteria: string, user: UserProfileDto): Promise<any> {
+        const { id, ...rest } =  user;
+        const update = await this.userRepository
+            .update({ [criteria]: user[criteria] }, { ...rest })
+            .then(async (response) => {
+                return await this.userRepository.findOne({
+                    where: { [criteria]: user[criteria] },
+                });
+            })
+            .catch(() => new HttpException(
+                '사용자 정보 변경 실패',
+                HttpStatus.FORBIDDEN,
+            ),
+        );
+        return update;
     }
 }

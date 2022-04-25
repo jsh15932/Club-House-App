@@ -6,6 +6,7 @@ import { UserService } from 'src/users/users.service';
 import { RegistResDto } from './dto';
 import * as SMS from 'sms_ru';
 import * as bcrypt from 'bcrypt';
+import { FileService } from 'src/file/file.service';
 
 @Injectable()
 export class AuthService {
@@ -13,6 +14,7 @@ export class AuthService {
         @Inject(forwardRef(() => UserService))
         private readonly userService: UserService,
         private readonly mailerService: MailerService,
+        private readonly fileService: FileService,
     ) {}
 
     async Regist(user: UserDto): Promise<RegistResDto> {
@@ -33,7 +35,13 @@ export class AuthService {
         if(user.password.length) {
             user.password = await this.BcryptHash(user.password);
         }
-        return;
+        const pathUrl = typeof user.avatar === 'string' ? user.avatar : await this.fileService.LoadFile(user.avatar);
+        const profile = user.hasOwnProperty('id') ? await this.userService.Update('id', { ...user, avatar: pathUrl, code }) : await this.userService.Create({ ...user, avatar: pathUrl, code });
+        return {
+            id: profile.id ? profile.id : user.id,
+            message: 'success',
+            error: false,
+        };
     }
 
     RandomCode(): string {
