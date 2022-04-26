@@ -2,15 +2,15 @@ import { Body, Controller, HttpException, HttpStatus, Post, UploadedFile, UseInt
 import { FileFieldsInterceptor } from '@nestjs/platform-express';
 import { UserDto } from 'src/dto/user.dto';
 import { AuthService } from './auth.service';
-import { RegistResDto } from './dto';
+import { LoginReqDto, LoginResDto, RegistResDto } from './dto';
 
-@Controller('/api/auth')
+@Controller('auth')
 export class AuthController {
     constructor(
         private readonly authService: AuthService
     ) {}
 
-    @Post('/reigst')
+    @Post('/regist')
     @UseInterceptors(FileFieldsInterceptor([{ name: 'avatar', maxCount: 1 }]))
     async Regist(
         @UploadedFile() files: Array<Express.Multer.File> | string,
@@ -30,6 +30,14 @@ export class AuthController {
         } catch (e) {
             throw new HttpException('Regist', HttpStatus.FORBIDDEN);
         }
+    }
+
+    @Post('/login')
+    async Login(
+        @Body() body: LoginReqDto
+    ): Promise<LoginResDto> {
+        const user = await this.authService.Login(body);
+        return user;
     }
 
 }

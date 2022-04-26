@@ -1,6 +1,5 @@
-import { Body, HttpException, HttpStatus, Injectable, Req } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable, Req } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { async, retry } from 'rxjs';
 import { UserDto } from 'src/dto/user.dto';
 import { Repository } from 'typeorm';
 import { UserProfileDto } from './dto/dto';

@@ -3,10 +3,11 @@ import { forwardRef, HttpException, HttpStatus, Inject, Injectable } from '@nest
 import { UserDto } from 'src/dto/user.dto';
 import { UserProfileDto } from 'src/users/dto/dto';
 import { UserService } from 'src/users/users.service';
-import { RegistResDto } from './dto';
+import { LoginReqDto, LoginResDto, RegistResDto } from './dto';
 import * as SMS from 'sms_ru';
 import * as bcrypt from 'bcrypt';
 import { FileService } from 'src/file/file.service';
+import { JwtService } from '@nestjs/jwt';
 
 @Injectable()
 export class AuthService {
@@ -15,6 +16,7 @@ export class AuthService {
         private readonly userService: UserService,
         private readonly mailerService: MailerService,
         private readonly fileService: FileService,
+        private readonly jwtService: JwtService,
     ) {}
 
     async Regist(user: UserDto): Promise<RegistResDto> {
@@ -40,6 +42,29 @@ export class AuthService {
         return {
             id: profile.id ? profile.id : user.id,
             message: 'success',
+            error: false,
+        };
+    }
+
+    async Login(data: LoginReqDto): Promise<LoginResDto> {
+        const user = await this.userService.findOne(data.field, data.login);
+        if(!user) {
+            return {
+                message: '존재하지 않는 유저',
+                error: true,
+            };
+        }
+        const match = await bcrypt.compare(data.password, user.password);
+        if(!match) {
+            return {
+                message: '올바르지 않은 비밀번호',
+                error: true,
+            }
+        }
+        const token = await this.CreateToken(user);
+        return {
+            ...token,
+            message: '',
             error: false,
         };
     }
@@ -128,5 +153,19 @@ export class AuthService {
             Number(process.env.CRYPTO_WORD_SECRET),
         );
         return hash;
+    }
+
+    async CreateToken(user: UserDto): Promise<{ access_token: string }> {
+        const payload = {
+            id: user.id,
+            name: user.name,
+            email: user.email,
+            avatar: user.avatar,
+            phone: user.phone,
+            sub: user.id,
+        };
+        return {
+            access_token: this.jwtService.sign(payload),
+        };
     }
 }
