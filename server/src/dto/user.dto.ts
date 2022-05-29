@@ -3,7 +3,7 @@ export class UserDto {
     email: string;
     password: string;
     user_id: string;
-    name: string;
+    username: string;
     avatar: string;
     isActive: boolean;
     phone: string;

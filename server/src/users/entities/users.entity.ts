@@ -24,7 +24,7 @@ export class User {
 
     @Column({ default: '' })
     @Length(3, 20)
-    name: string;
+    username: string;
 
     @Column({ default: '' })
     avatar: string;

@@ -26,7 +26,7 @@ export class AuthService {
             if(existEmail.error) {
                 return existEmail;
             }
-            await this.EmailActivate(code, user.email, user.name);
+            await this.EmailActivate(code, user.email, user.username);
         } else if(user.phone?.length) {
             const existPhone = await this.ExistPhone(user);
             if(existPhone) {
@@ -158,7 +158,7 @@ export class AuthService {
     async CreateToken(user: UserDto): Promise<{ access_token: string }> {
         const payload = {
             id: user.id,
-            name: user.name,
+            name: user.username,
             email: user.email,
             avatar: user.avatar,
             phone: user.phone,
