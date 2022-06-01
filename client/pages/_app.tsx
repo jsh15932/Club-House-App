@@ -10,4 +10,3 @@ class MyApp extends React.Component<AppProps> {
 }
 
 export default wrapper.withRedux(MyApp);
-
