@@ -2,6 +2,7 @@ import { useRouter } from "next/router";
 import React, { FC, useContext, useState } from "react";
 import { UserContext } from "../../layout/base.wrapper";
 import Avatar from "../avatar";
+import PopupLogin from "../popup.login";
 import style from './login.module.scss';
 
 interface IState {

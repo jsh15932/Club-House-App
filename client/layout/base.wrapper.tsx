@@ -1,6 +1,9 @@
 import Head from "next/head";
 import { createContext, FC, useState } from "react";
+import BackArrow from "../component/back.arrow";
+import Footer from "../component/footer";
 import NavUser from "../component/nav.user";
+import PopupError from "../component/popup.error";
 import { IUser } from "../dto/user.dto";
 
 interface IBaseWrapper {
