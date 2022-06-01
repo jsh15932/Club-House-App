@@ -1,5 +1,6 @@
 import Head from "next/head";
 import { createContext, FC, useState } from "react";
+import NavUser from "../component/nav.user";
 import { IUser } from "../dto/user.dto";
 
 interface IBaseWrapper {

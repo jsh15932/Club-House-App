@@ -2,7 +2,8 @@ import { IUser } from "../../dto/user.dto";
 import type { NextPage } from 'next';
 import { useRouter } from "next/router";
 import style from "./home.module.scss";
-import { BaseWrapper } from "../../layout/base.wrapper";
+import { HomeServerSideProps } from "../../server.props/home";
+import BaseWrapper from "../../layout/base.wrapper";
 
 interface IHome {
     user: IUser;
